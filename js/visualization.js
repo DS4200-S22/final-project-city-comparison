@@ -5,8 +5,8 @@ const height = 650; //- margin.top - margin.bottom;
 
 let myBars;
 
-d3.csv("data/Cleaned_CityLife.csv").then((data) => {
-  console.log(data.slice(0, 10));
+d3.csv("data/pm_06_data.csv").then((consdata) => {
+  console.log(consdata.slice(0, 10));
 
 
 //bar chart
@@ -17,11 +17,25 @@ d3.csv("data/Cleaned_CityLife.csv").then((data) => {
 {
 
     const attributes = ["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"];
+    const color = d3.scaleOrdinal()
+                    .domain(["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"])
+                    .range(["#FF7F50", "#21908dff", "#fde725ff", "#fde765ff"]);
 
-    const avgRatings = [d3.mean(data.map(function(d){ return d.attributes[0]})),
-       d3.mean(data.map(function(d){ return d.attributes[1]})),
-       d3.mean(data.map(function(d){ return d.attributes[2]})),
-       d3.mean(data.map(function(d){ return d.attributes[3]}))];
+    //sample continent selection
+    //reference:
+    //https://stackoverflow.com/questions/23156864/d3-js-filter-from-csv-file-using-multiple-columns
+    var data = consdata.filter(function(d) 
+    { 
+        if( d["UA_Continent"] == "North America")
+        { 
+            return d;
+        } 
+    });
+
+    const avgRatings = [d3.mean(data.map(function(d){ return d.(attributes[0])})),
+       d3.mean(data.map(function(d){ return d.(attributes[1])})),
+       d3.mean(data.map(function(d){ return d.(attributes[2])})),
+       d3.mean(data.map(function(d){ return d.(attributes[3])}))];
 
     // Create X scale
     let x3 = d3.scaleBand()
@@ -55,14 +69,14 @@ d3.csv("data/Cleaned_CityLife.csv").then((data) => {
 
     // Add points
     myBars = svg3.selectAll("bar")
-                            .data(counts)
+                            .data(data)
                             .enter()
                               .append("rect")
-                              .attr("x", (d,i) => x3(i))
-                              .attr("y", (d) => y3(d.count))
-                              .attr("height", (d) => (height - margin.bottom) - y3(d.count)) 
+                              .attr("x", (i) => x3(attributes[i]))
+                              .attr("y", (i) => y3(avgRatings[i]))
+                              .attr("height", height - margin.top - margin.bottom)
                               .attr("width", x3.bandwidth())
-                              .style("fill", (d) => color(d.species));    
+                              .style("fill", (d) => color((i) => attributes[i]));    
   }
 
 //scatter plot
