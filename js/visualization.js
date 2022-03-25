@@ -12,7 +12,7 @@ let svg3 = d3.select("#vis-holder")
 let myBars;
 
 d3.csv("data/pm_06_data.xlsx").then((consdata) => {
-  console.log(consdata.slice(0, 10));
+  //console.log(consdata.slice(0, 10));
 
 
 //bar chart
@@ -50,6 +50,8 @@ d3.csv("data/pm_06_data.xlsx").then((consdata) => {
     avgAtrContinent(attributes[2]),
     avgAtrContinent(attributes[3])];
 
+    console.log(attributes[0]);
+    console.log(d3.mean(data.map(function(d){ return d.atr})));
     // Create X scale
     let x3 = d3.scaleBand()
             .domain(d3.range(attributes.length))
