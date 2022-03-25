@@ -3,9 +3,15 @@ const margin = { top: 50, right: 50, bottom: 50, left: 200 };
 const width = 900; //- margin.left - margin.right;
 const height = 650; //- margin.top - margin.bottom;
 
+let svg3 = d3.select("#vis-holder")
+                .append("svg")
+                .attr("width", width - margin.left - margin.right)
+                .attr("height", height - margin.top - margin.bottom)
+                .attr("viewBox", [0, 0, width, height]); 
+
 let myBars;
 
-d3.csv("data/pm_06_data.csv").then((consdata) => {
+d3.csv("data/pm_06_data.xlsx").then((consdata) => {
   console.log(consdata.slice(0, 10));
 
 
@@ -32,14 +38,21 @@ d3.csv("data/pm_06_data.csv").then((consdata) => {
         } 
     });
 
-    const avgRatings = [d3.mean(data.map(function(d){ return d.(attributes[0])})),
-       d3.mean(data.map(function(d){ return d.(attributes[1])})),
-       d3.mean(data.map(function(d){ return d.(attributes[2])})),
-       d3.mean(data.map(function(d){ return d.(attributes[3])}))];
+    //to find the avg of the given attribute
+    function avgAtrContinent(atr) 
+    {
+      return d3.mean(data.map(function(d){ return d.atr}));
+    }
+
+    const avgRatings = 
+    [avgAtrContinent(attributes[0]), 
+    avgAtrContinent(attributes[1]),
+    avgAtrContinent(attributes[2]),
+    avgAtrContinent(attributes[3])];
 
     // Create X scale
     let x3 = d3.scaleBand()
-            .domain(d3.range(counts.length))
+            .domain(d3.range(attributes.length))
             .range([margin.left, width - margin.right])
             .padding(0.1); 
     
