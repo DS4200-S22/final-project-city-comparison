@@ -80,5 +80,21 @@ d3.csv("data/pm_06_data.csv").then((consdata) => {
   }
 
 //scatter plot
+const ratings = (data.map(function(d){ return d[attributes[0]]}))
+const overall_score = ["Overall Rating"]
+const y_data = (data.map(function(d){ return d.(overall_score[0])}))
+
+const svg1 = d3.select("#vis-holder")
+                .append("svg")
+                .attr("width", width - margin.left - margin.right)
+                .attr("height", height - margin.top - margin.bottom)
+                .attr("viewBox", [0, 0, width, height]); 
+
+let myCircles1;
+
+let x1, y1, x2, y2, x3, y3;
+let xKey1 = "City";
+let yKey1 = "Average Ratings";
+
 
 });
