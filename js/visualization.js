@@ -11,8 +11,8 @@ let svg3 = d3.select("#vis-holder")
 
 let myBars;
 
-d3.csv("data/pm_06_data.xlsx").then((consdata) => {
-  //console.log(consdata.slice(0, 10));
+d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
+  console.log(consdata.slice(0, 10));
 
 
 //bar chart
@@ -38,20 +38,31 @@ d3.csv("data/pm_06_data.xlsx").then((consdata) => {
         } 
     });
 
-    //to find the avg of the given attribute
-    function avgAtrContinent(atr) 
-    {
-      return d3.mean(data.map(function(d){ return d.atr}));
-    }
 
-    const avgRatings = 
-    [avgAtrContinent(attributes[0]), 
-    avgAtrContinent(attributes[1]),
-    avgAtrContinent(attributes[2]),
-    avgAtrContinent(attributes[3])];
+var costOfLiving = data.map(function(d) { return d["Cost of Living"] });
+var housing = data.map(function(d) { return d["Housing"] });
+var healthcare = data.map(function(d) { return d["Healthcare"] });
+var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
 
-    console.log(attributes[0]);
-    console.log(d3.mean(data.map(function(d){ return d.atr})));
+
+    const avgRatings = [(d3.mean(costOfLiving)),
+    (d3.mean(housing)),
+    (d3.mean(healthcare)),
+    (d3.mean(leisureCulture))];
+
+/*
+    // set-up graph
+    x3 = d3.scaleBand()
+          .range([margin.left, width - margin.right])
+                    .padding(0.1); 
+    y3 = d3.scaleLinear()
+    .range([height-margin.bottom, margin.top]);
+
+  x3.domain(d3.range(attributes.length))
+
+  y3.domain([0, d3.max(avgRatings)]);
+
+*/
     // Create X scale
     let x3 = d3.scaleBand()
             .domain(d3.range(attributes.length))
@@ -83,7 +94,7 @@ d3.csv("data/pm_06_data.xlsx").then((consdata) => {
   // NEED TO FIGURE OUT MYBARS BELOW
 
     // Add points
-    myBars = svg3.selectAll("bar")
+    myBars = svg3.selectAll(".bar")
                             .data(data)
                             .enter()
                               .append("rect")
@@ -91,10 +102,11 @@ d3.csv("data/pm_06_data.xlsx").then((consdata) => {
                               .attr("y", (i) => y3(avgRatings[i]))
                               .attr("height", height - margin.top - margin.bottom)
                               .attr("width", x3.bandwidth())
-                              .style("fill", (d) => color((i) => attributes[i]));    
+                              .style("fill", (d) => color((i) => attributes[i]));       
   }
 
 //scatter plot
+/*
 const ratings = (data.map(function(d){ return d[attributes[0]]}))
 const overall_score = ["Overall Rating"]
 const y_data = (data.map(function(d){ return d.(overall_score[0])}))
@@ -111,5 +123,6 @@ let x1, y1, x2, y2, x3, y3;
 let xKey1 = "City";
 let yKey1 = "Average Ratings";
 
+*/
 
-});
+}); 
