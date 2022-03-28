@@ -22,7 +22,7 @@ const svg1 = d3.select("#vis-container")
 let myBars;
 let myCircles;
 
-d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
+d3.csv("data/pm_06_data.csv").then((consdata) => {
   console.log(consdata.slice(0, 10));
 
 
@@ -68,6 +68,7 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
     {attr : "Healthcare", rating:(d3.mean(healthcare))},
     {attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
     ];
+
 
 
 // Create X scale
@@ -118,10 +119,10 @@ const y_data = (data.map(function(d){ return d.(overall_score[0])}))
 */
 
 
-
+let overallScore = data.map(function(d) { return d["Overall Rating"] });
 let cities = data.map(function(d) { return d["UA_Name"] });
 const cityCostOfLiving = [
-    {city : cities, rating:costOfLiving}];
+    {city: cities, overall: overallScore, rating:costOfLiving}];
     console.log(cityCostOfLiving);
 
 
@@ -129,11 +130,13 @@ const cityCostOfLiving = [
    // let maxX1 = d3.max(cityCostOfLiving, (d) => 
     //    { return d.city; });
 
+    // Finx max x 
+    let maxX1 = d3.max(overallScore);
+
     // Create X scale
-    x1 = d3.scaleBand()
-                .domain(cityCostOfLiving.map(function(d) { return d.city; }))
-                .range([margin.left, width-margin.right])
-                .padding(0.1); 
+    x1 = d3.scaleLinear()
+                .domain([0, maxX1])
+                .range([margin.left, width-margin.right]); 
     
     // Add x axis 
     svg1.append("g")
@@ -145,7 +148,7 @@ const cityCostOfLiving = [
                       .attr("y", margin.bottom - 4)
                       .attr("fill", "black")
                       .attr("text-anchor", "end")
-                      .text("Nort American Cities")
+                      .text("Average Overall Rating Across Cities")
       );
 
     // Finx max y 
@@ -155,16 +158,7 @@ const cityCostOfLiving = [
     y1 = d3.scaleLinear()
                 .domain([0, maxY1])
                 .range([height - margin.bottom, margin.top]); 
-        // Add points
-    myCircles = svg1.selectAll("circle")
-                            .data(cityCostOfLiving)
-                            .enter()
-                              .append("circle")
-                              .attr("cx", (d) => x1(d.city))
-                              .attr("cy", (d) => x1(d.rating))
-                              .attr("r", 8)
-                              //.style("fill", (d) => color(d.attr))
-                              .style("opacity", 0.5);
+       
 
      //Create y axis
       svg1.append("g")
@@ -177,6 +171,17 @@ const cityCostOfLiving = [
         .attr("transform", `translate(0,${height - margin.bottom})`) 
         .call(d3.axisBottom(x1)) 
         .attr("font-size", '20px'); 
+
+    // Add points
+    myCircles = svg1.selectAll("circle")
+                            .data(cityCostOfLiving)
+                            .enter()
+                              .append("circle")
+                              .attr("cx", (d) => x1(d.overall))
+                              .attr("cy", (d) => y1(d.rating))
+                              .attr("r", 8)
+                              //.style("fill", (d) => color(d.attr))
+                              .style("opacity", 0.5);
        
 
 
