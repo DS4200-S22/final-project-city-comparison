@@ -22,6 +22,10 @@ const svg1 = d3.select("#vis-container")
 let myBars;
 let myCircles;
 
+const color = d3.scaleOrdinal()
+                    .domain(["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"])
+                    .range(["#FF7F50", "#21908dff", "#fde725ff", "#fde765ff"]);
+
 d3.csv("data/pm_06_data.csv").then((consdata) => {
   console.log(consdata.slice(0, 10));
 
@@ -34,9 +38,6 @@ d3.csv("data/pm_06_data.csv").then((consdata) => {
 {
 
     const attributes = ["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"];
-    const color = d3.scaleOrdinal()
-                    .domain(["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"])
-                    .range(["#FF7F50", "#21908dff", "#fde725ff", "#fde765ff"]);
 
     //sample continent selection
     //reference:
@@ -121,9 +122,16 @@ const y_data = (data.map(function(d){ return d.(overall_score[0])}))
 
 let overallScore = data.map(function(d) { return d["Overall Rating"] });
 let cities = data.map(function(d) { return d["UA_Name"] });
+
 const cityCostOfLiving = [
     {city: cities, overall: overallScore, rating:costOfLiving}];
     console.log(cityCostOfLiving);
+
+const scatterData = [];
+
+for (let i = 0; i < cities.length; i++) {
+  scatterData.push({city : cities[i], overall:overallScore[i], rating:costOfLiving[i]})
+}
 
 
 // Find max x
@@ -134,7 +142,7 @@ const cityCostOfLiving = [
     let maxX1 = d3.max(overallScore);
 
     // Create X scale
-    x1 = d3.scaleLinear()
+    let x1 = d3.scaleLinear()
                 .domain([0, maxX1])
                 .range([margin.left, width-margin.right]); 
     
@@ -155,7 +163,7 @@ const cityCostOfLiving = [
     let maxY1 = d3.max(costOfLiving);
 
     // Create Y scale
-    y1 = d3.scaleLinear()
+    let y1 = d3.scaleLinear()
                 .domain([0, maxY1])
                 .range([height - margin.bottom, margin.top]); 
        
@@ -172,17 +180,17 @@ const cityCostOfLiving = [
         .call(d3.axisBottom(x1)) 
         .attr("font-size", '20px'); 
 
+
     // Add points
     myCircles = svg1.selectAll("circle")
-                            .data(cityCostOfLiving)
+                            .data(scatterData)
                             .enter()
                               .append("circle")
                               .attr("cx", (d) => x1(d.overall))
                               .attr("cy", (d) => y1(d.rating))
                               .attr("r", 8)
-                              //.style("fill", (d) => color(d.attr))
-                              .style("opacity", 0.5);
-       
+                              .style("fill", (d) => color(costOfLiving))
+                              .style("opacity", 0.5);       
 
 
 
