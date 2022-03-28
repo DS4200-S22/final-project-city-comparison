@@ -3,13 +3,24 @@ const margin = { top: 50, right: 50, bottom: 50, left: 200 };
 const width = 900; //- margin.left - margin.right;
 const height = 650; //- margin.top - margin.bottom;
 
-let svg3 = d3.select("#vis-container")
+
+//container for barchart
+const svg3 = d3.select("#vis-container")
                 .append("svg")
                 .attr("width", width - margin.left - margin.right)
                 .attr("height", height - margin.top - margin.bottom)
                 .attr("viewBox", [0, 0, width, height]); 
 
+//container for scatter plot
+const svg1 = d3.select("#vis-container")
+                .append("svg")
+                .attr("width", width - margin.left - margin.right)
+                .attr("height", height - margin.top - margin.bottom)
+                .attr("viewBox", [0, 0, width, height]); 
+ 
+
 let myBars;
+let myCircles;
 
 d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
   console.log(consdata.slice(0, 10));
@@ -99,23 +110,77 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
   }
 
 //scatter plot
+{
 /*
 const ratings = (data.map(function(d){ return d[attributes[0]]}))
 const overall_score = ["Overall Rating"]
 const y_data = (data.map(function(d){ return d.(overall_score[0])}))
-
-const svg1 = d3.select("#vis-holder")
-                .append("svg")
-                .attr("width", width - margin.left - margin.right)
-                .attr("height", height - margin.top - margin.bottom)
-                .attr("viewBox", [0, 0, width, height]); 
-
-let myCircles1;
-
-let x1, y1, x2, y2, x3, y3;
-let xKey1 = "City";
-let yKey1 = "Average Ratings";
-
 */
+
+
+
+let cities = data.map(function(d) { return d["UA_Name"] });
+const cityCostOfLiving = [
+    {city : cities, rating:costOfLiving}
+    ];
+    console.log(cityCostOfLiving);
+
+
+// Find max x
+    let maxX1 = d3.max(cityCostOfLiving, (d) => 
+        { return d.city; });
+
+    // Create X scale
+    x1 = d3.scaleLinear()
+                .domain([0,maxX1])
+                .range([margin.left, width-margin.right]); 
+    
+    // Add x axis 
+    svg1.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`) 
+        .call(d3.axisBottom(x1))   
+        .attr("font-size", '20px')
+        .call((g) => g.append("text")
+                      .attr("x", width - margin.right)
+                      .attr("y", margin.bottom - 4)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "end")
+                      .text("Nort American Cities")
+      );
+
+    // Finx max y 
+    let maxY1 = d3.max(costOfLiving);
+
+    // Create Y scale
+    y1 = d3.scaleLinear()
+                .domain([0, maxY1])
+                .range([height - margin.bottom, margin.top]); 
+
+    // Add y axis 
+    svg1.append("g")
+        .attr("transform", `translate(${margin.left}, 0)`) 
+        .call(d3.axisLeft(y1)) 
+        .attr("font-size", '20px') 
+        .call((g) => g.append("text")
+                      .attr("x", 0)
+                      .attr("y", margin.top)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "end")
+                      .text("Cost of Living")
+      );
+
+    // Add points
+    myCircles = svg1.selectAll("circle")
+                            .data(cityCostOfLiving)
+                            .enter()
+                              .append("circle")
+                              .attr("x", (d,i) => x1(i))
+                              .attr("y", (d) => y1(d.rating))
+                              .attr("r", 8)
+                              //.style("fill", (d) => color(d.attr))
+                              .style("opacity", 0.5);
+
+   
+}
 
 }); 
