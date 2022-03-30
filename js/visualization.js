@@ -172,14 +172,7 @@ for (let i = 0; i < cities.length; i++) {
       svg1.append("g")
       .attr("transform", `translate(${margin.left}, 0)`) 
       .call(d3.axisLeft(y1)) 
-      .attr("font-size", '20px')
-      .call((g) => g.append("text")
-                      .attr("x", width - margin.right)
-                      .attr("y", margin.bottom - 4)
-                      .attr("fill", "black")
-                      .attr("text-anchor", "end")
-                      .text("Cost of Living")
-      );
+      .attr("font-size", '20px'); 
   
   //Create x axis
     svg1.append("g")
@@ -188,7 +181,7 @@ for (let i = 0; i < cities.length; i++) {
         .attr("font-size", '20px'); 
 
 
-    // Add points to SVG
+    // Add points to Scatterplot
     myCircles = svg1.selectAll("circle")
                             .data(scatterData)
                             .enter()
