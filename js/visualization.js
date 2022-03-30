@@ -172,7 +172,14 @@ for (let i = 0; i < cities.length; i++) {
       svg1.append("g")
       .attr("transform", `translate(${margin.left}, 0)`) 
       .call(d3.axisLeft(y1)) 
-      .attr("font-size", '20px'); 
+      .attr("font-size", '20px')
+      .call((g) => g.append("text")
+                      .attr("x", width - margin.right)
+                      .attr("y", margin.bottom - 4)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "end")
+                      .text("Cost of Living")
+      );
   
   //Create x axis
     svg1.append("g")
