@@ -181,7 +181,7 @@ for (let i = 0; i < cities.length; i++) {
         .attr("font-size", '20px'); 
 
 
-    // Add points
+    // Add points to SVG
     myCircles = svg1.selectAll("circle")
                             .data(scatterData)
                             .enter()
