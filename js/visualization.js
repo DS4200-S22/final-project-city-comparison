@@ -26,7 +26,7 @@ const color = d3.scaleOrdinal()
                     .domain(["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"])
                     .range(["#FF7F50", "#21908dff", "#fde725ff", "#fde765ff"]);
 
-d3.csv("data/pm_06_data.csv").then((consdata) => {
+d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
 
 
 
@@ -181,7 +181,7 @@ for (let i = 0; i < cities.length; i++) {
         .attr("font-size", '20px'); 
 
 
-var tooltip = d3.select("#vis-container")
+let tooltip = d3.select("#vis-container")
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip")
@@ -193,12 +193,12 @@ var tooltip = d3.select("#vis-container")
 
     // A function that change this tooltip when the user hover a point.
   // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
-  var mouseover = function(d) {
+  let mouseover = function(d) {
     tooltip
       .style("opacity", 1)
   }
 
-  var mousemove = function(d) {
+  let mousemove = function(d) {
     tooltip
       .html("City: " + d.city) 
       .html("Cost of Living:" + d.rating)
@@ -206,7 +206,7 @@ var tooltip = d3.select("#vis-container")
   }
 
   // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-  var mouseleave = function(d) {
+  let mouseleave = function(d) {
     tooltip
       .transition()
       .duration(200)
@@ -231,7 +231,12 @@ var tooltip = d3.select("#vis-container")
                                    .attr("r", 10)
                                    tooltip.style("opacity", 1)
                                })
-                              .on("mousemove", mousemove)
+                              .on("mousemove", function(d) {
+                                tooltip
+                                //.html(d.city) 
+                                .html("Cost of Living:" + d.rating)
+                                //.html(d.overall)
+                            })
                               .on("mouseleave", function(d) {
                                 d3.select(this).transition()
                                 .attr("r", 8)
