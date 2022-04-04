@@ -200,6 +200,7 @@ var tooltip = d3.select("#vis-container")
 
   var mousemove = function(scatterData) {
     tooltip
+      .html("City: " + d.city) 
       .html((d) => x1(d.overall))
   }
 
