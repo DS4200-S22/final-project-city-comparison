@@ -232,7 +232,6 @@ var tooltip = d3.select("#vis-container")
                                    tooltip.style("opacity", 1)
                                })
                               .on("mousemove", mousemove)
-                               })
                               .on("mouseleave", function(d) {
                                 d3.select(this).transition()
                                 .attr("r", 8)
