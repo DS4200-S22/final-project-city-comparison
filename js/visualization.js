@@ -198,11 +198,11 @@ var tooltip = d3.select("#vis-container")
       .style("opacity", 1)
   }
 
-  var mousemove = function(scatterData) {
+  var mousemove = function(d) {
     tooltip
-      .html("City: " + ((d) => x1(d.city))) 
-      .html("Cost of Living:" + ((d) => x1(d.rating)))
-      .html((d) => x1(d.overall))
+      .html("City: " + d.city) 
+      .html("Cost of Living:" + d.rating)
+      .html(d.overall)
   }
 
   // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
