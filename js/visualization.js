@@ -172,15 +172,24 @@ for (let i = 0; i < cities.length; i++) {
       svg1.append("g")
       .attr("transform", `translate(${margin.left}, 0)`) 
       .call(d3.axisLeft(y1)) 
-      .attr("font-size", '20px'); 
+      .attr("font-size", '20px')
+      .call((g) => g.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 0-margin.left)
+                    .attr("x", 0- (height/2))
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+                    .text("Cost of Living rating")
+      ); 
 
      // Y axis label:
       svg1.append("text")
-        .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
-        .attr("y", -margin.left+20)
-        .attr("x", -margin.top)
-        .text("Cost of Living rating")
+        .attr("y", 0-margin.left)
+        .attr("x", 0- (height/2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Cost of Living rating");
 
   
   //Create x axis
