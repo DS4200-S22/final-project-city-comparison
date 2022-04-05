@@ -181,6 +181,8 @@ for (let i = 0; i < cities.length; i++) {
         .attr("font-size", '20px'); 
 
 
+//tooltip for hovering
+
 let tooltip = d3.select("#vis-container")
     .append("div")
     .style("opacity", 0)
@@ -190,29 +192,6 @@ let tooltip = d3.select("#vis-container")
     .style("border-width", "1px")
     .style("border-radius", "5px")
     .style("padding", "10px");
-
-    // A function that change this tooltip when the user hover a point.
-  // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
-  let mouseover = function(d) {
-    tooltip
-      .style("opacity", 1)
-  }
-
-  let mousemove = function(d) {
-    tooltip
-      .html("City: " + d.city) 
-      .html("Cost of Living:" + d.rating)
-      .html(d.overall)
-  }
-
-  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-  let mouseleave = function(d) {
-    tooltip
-      .transition()
-      .duration(200)
-      .style("opacity", 0)
-  }
-
 
 
     // Add points to Scatterplot
@@ -225,23 +204,22 @@ let tooltip = d3.select("#vis-container")
                               .attr("r", 8)
                               .style("fill", (d) => color(costOfLiving))
                               .style("opacity", 0.5)
-                              .on("mouseover", function(d, i) {
+                              .on("mouseover", function(event,d) {
                                    d3.select(this).transition()
                                    .duration('100')
-                                   .attr("r", 10)
-                                   tooltip.style("opacity", 1)
+                                   .attr("r", 10);
+                                   tooltip
+                                   .style("opacity", 1)
+                                   .html("City: " + d.city + "<br/>Cost of Living: " + d.rating + "<br/>Overall Rating: " 
+                                    + d.overall)
+                                    .style("left", d3.select(this).attr("cx") + 10 + "px") 
+                                    .style("top", d3.select(this).attr("cy") - 15 + "px");
                                })
-                              .on("mousemove", function(d) {
-                                tooltip
-                                //.html(d.city) 
-                                .html("Cost of Living:" + d.rating)
-                                //.html(d.overall)
-                            })
-                              .on("mouseleave", function(d) {
+                            .on("mouseleave", function(d) {
                                 d3.select(this).transition()
                                 .attr("r", 8)
-                                .duration(100)
-                                tooltip.style("opacity", 0)
+                                .duration(100);
+                                tooltip.style("opacity", 0);
   })
 
 
