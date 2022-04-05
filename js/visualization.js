@@ -84,6 +84,7 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
         .call(d3.axisBottom(x3)   
           .tickFormat(i => avgRatings[i].attr))
         .attr("font-size", '20px')
+        .attr("text-anchor", "end")
         .text('City Attribute');
 
     // Find max y (50)
@@ -99,6 +100,7 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
         .attr("transform", `translate(${margin.left}, 0)`) 
         .call(d3.axisLeft(y3)) 
         .attr("font-size", '20px')
+        .attr("text-anchor", "end")
         .text('Average Rating');
 
     // Add points
@@ -175,6 +177,7 @@ for (let i = 0; i < cities.length; i++) {
       .attr("transform", `translate(${margin.left}, 0)`) 
       .call(d3.axisLeft(y1)) 
       .attr("font-size", '20px')
+      .attr("text-anchor", "end")
       .text("Cost of Living Rating"); 
   
   //Create x axis
