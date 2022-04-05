@@ -83,9 +83,7 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
         .attr("transform", `translate(0,${height - margin.bottom})`) 
         .call(d3.axisBottom(x3)   
           .tickFormat(i => avgRatings[i].attr))
-        .attr("font-size", '20px')
-        .attr("text-anchor", "end")
-        .text('City Attribute');
+        .attr("font-size", '20px');
 
     // Find max y (50)
     let maxY3 = d3.max(avgRatings, function(d) { return d.rating; });
@@ -99,9 +97,7 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
     svg3.append("g")
         .attr("transform", `translate(${margin.left}, 0)`) 
         .call(d3.axisLeft(y3)) 
-        .attr("font-size", '20px')
-        .attr("text-anchor", "end")
-        .text('Average Rating');
+        .attr("font-size", '20px');
 
     // Add points
     myBars = svg3.selectAll("bar")
@@ -176,9 +172,7 @@ for (let i = 0; i < cities.length; i++) {
       svg1.append("g")
       .attr("transform", `translate(${margin.left}, 0)`) 
       .call(d3.axisLeft(y1)) 
-      .attr("font-size", '20px')
-      .attr("text-anchor", "end")
-      .text("Cost of Living Rating"); 
+      .attr("font-size", '20px'); 
   
   //Create x axis
     svg1.append("g")
