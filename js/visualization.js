@@ -178,7 +178,8 @@ for (let i = 0; i < cities.length; i++) {
                       .attr("y", margin.bottom - 4)
                       .attr("fill", "black")
                       .attr("text-anchor", "end")
-                      .text("Cost of Living Rating"); 
+                      .text("Cost of Living Rating")
+      ); 
   
   //Create x axis
     svg1.append("g")
