@@ -177,19 +177,9 @@ for (let i = 0; i < cities.length; i++) {
                     .attr("transform", "rotate(-90)")
                     .attr("y", 0-margin.left)
                     .attr("x", 0- (height/2))
-                    .attr("dy", "1em")
                     .style("text-anchor", "middle")
                     .text("Cost of Living rating")
       ); 
-
-     // Y axis label:
-      svg1.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 0-margin.left)
-        .attr("x", 0- (height/2))
-        .attr("dy", "1em")
-        .style("text-anchor", "middle")
-        .text("Cost of Living rating");
 
   
   //Create x axis
