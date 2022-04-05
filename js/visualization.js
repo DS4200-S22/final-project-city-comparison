@@ -176,7 +176,7 @@ for (let i = 0; i < cities.length; i++) {
       .call((g) => g.append("text")
                     .attr("transform", "rotate(-90)")
                     .attr("y", 0-margin.left)
-                    .attr("x", 0- (height/2))
+                    .attr("x", 0- (height/2)+20)
                     .attr('fill', 'black')
                     .style("text-anchor", "middle")
                     .text("Cost of Living rating")
