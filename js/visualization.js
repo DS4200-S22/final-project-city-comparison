@@ -174,10 +174,10 @@ for (let i = 0; i < cities.length; i++) {
       .call(d3.axisLeft(y1)) 
       .attr("font-size", '20px')
       .call((g) => g.append("text")
-                      .attr("x", width - margin.right)
-                      .attr("y", margin.bottom - 4)
-                      .attr("fill", "black")
+                      .attr("y", -margin.left+20)
+                      .attr("x", -margin.top)
                       .attr("text-anchor", "end")
+                      .attr("transform", "rotate(-90)")
                       .text("Cost of Living Rating")
       ); 
   
