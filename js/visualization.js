@@ -97,7 +97,17 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
     svg3.append("g")
         .attr("transform", `translate(${margin.left}, 0)`) 
         .call(d3.axisLeft(y3)) 
-        .attr("font-size", '20px');
+        .attr("font-size", '20px')
+        .call((g) => g.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 0-margin.left)
+                    .attr("x", 0- (height/2)+20)
+                    .attr("dy", "7em")
+                    .attr('fill', 'black')
+                    .style("text-anchor", "middle")
+                    .text("Attribute Rating")
+      ); 
+;
 
     // Add points
     myBars = svg3.selectAll("bar")
@@ -138,7 +148,7 @@ for (let i = 0; i < cities.length; i++) {
    // let maxX1 = d3.max(cityCostOfLiving, (d) => 
     //    { return d.city; });
 
-    // Finx max x 
+    // Find max x 
     let maxX1 = d3.max(overallScore);
 
     // Create X scale
@@ -177,9 +187,10 @@ for (let i = 0; i < cities.length; i++) {
                     .attr("transform", "rotate(-90)")
                     .attr("y", 0-margin.left)
                     .attr("x", 0- (height/2)+20)
+                    .attr("dy", "8em")
                     .attr('fill', 'black')
                     .style("text-anchor", "middle")
-                    .text("Cost of Living rating")
+                    .text("Cost of Living Rating")
       ); 
 
   
@@ -202,37 +213,68 @@ let tooltip = d3.select("#vis-container")
     .style("border-radius", "5px")
     .style("padding", "10px");
 
+/*
+const mouseover = function(event, d) {
+    d3.select(this).transition()
+        .duration('100')
+        .attr("r", 10);
+        tooltip
+        .style("opacity", 1)
+        .html("City: " + d.city + "<br/>Cost of Living: " + d.rating + "<br/>Overall Rating: " 
+        + d.overall)
+        .style("left", d3.select(this).attr("cx") + 10 + "px") 
+        .style("top", d3.select(this).attr("cy") - 15 + "px");
+}
+
+
+const mouseleave = function(event, d) {
+    d3.select(this).transition()
+        .attr("r", 8)
+        .duration(100);
+        tooltip.style("opacity", 0);
+}
+*/
+
+var mouseover = function(event, d) {
+    d3.select(this).transition()
+        .duration('100')
+        .attr("r", 10);
+        tooltip
+        .style("opacity", 1);
+  }
+
+  var mousemove = function(event, d) {
+    tooltip
+      .html("City: " + d.city + "<br/>Cost of Living: " + d.rating + "<br/>Overall Rating: " 
+        + d.overall)
+        .style("left", d + 10 + "px") 
+        .style("top", d - 15 + "px");
+  }
+
+  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+  var mouseleave = function(event, d) {
+    d3.select(this).transition()
+        .attr("r", 8)
+        .duration(100);
+        tooltip.style("opacity", 0);
+  }
+
+
+
 
     // Add points to Scatterplot
     myCircles = svg1.selectAll("circle")
                             .data(scatterData)
                             .enter()
-                              .append("circle")
+                            .append("circle")
                               .attr("cx", (d) => x1(d.overall))
                               .attr("cy", (d) => y1(d.rating))
                               .attr("r", 8)
                               .style("fill", (d) => color(costOfLiving))
                               .style("opacity", 0.5)
-                              .on("mouseover", function(event,d) {
-                                   d3.select(this).transition()
-                                   .duration('100')
-                                   .attr("r", 10);
-                                   tooltip
-                                   .style("opacity", 1)
-                                   .html("City: " + d.city + "<br/>Cost of Living: " + d.rating + "<br/>Overall Rating: " 
-                                    + d.overall)
-                                    .style("left", d3.select(this).attr("cx") + 10 + "px") 
-                                    .style("top", d3.select(this).attr("cy") - 15 + "px");
-                               })
-                            .on("mouseleave", function(d) {
-                                d3.select(this).transition()
-                                .attr("r", 8)
-                                .duration(100);
-                                tooltip.style("opacity", 0);
-  })
-
-
-   
+                              .on("mouseover", mouseover )
+                              .on("mousemove", mousemove )
+                              .on("mouseleave", mouseleave ); 
 }
 
 }); 
