@@ -235,7 +235,7 @@ const mouseleave = function(event, d) {
 }
 */
 
-var mouseover = function(event, d) {
+let mouseover = function(event, d) {
     d3.select(this).transition()
         .duration('100')
         .attr("r", 10);
@@ -243,7 +243,7 @@ var mouseover = function(event, d) {
         .style("opacity", 1);
   }
 
-  var mousemove = function(event, d) {
+let mousemove = function(event, d) {
     tooltip
       .html("City: " + d.city + "<br/>Cost of Living: " + d.rating + "<br/>Overall Rating: " 
         + d.overall)
@@ -252,7 +252,7 @@ var mouseover = function(event, d) {
   }
 
   // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-  var mouseleave = function(event, d) {
+let mouseleave = function(event, d) {
     d3.select(this).transition()
         .attr("r", 8)
         .duration(100);
