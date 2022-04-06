@@ -3,6 +3,11 @@ const margin = { top: 50, right: 50, bottom: 50, left: 200 };
 const width = 900; //- margin.left - margin.right;
 const height = 650; //- margin.top - margin.bottom;
 
+const svg2 = d3.select("#vis-container")
+                .append("svg")
+                .attr("width", width - margin.left - margin.right)
+                .attr("height", height - margin.top - margin.bottom)
+                .attr("viewBox", [0, 0, width, height]); 
 
 //container for barchart
 const svg3 = d3.select("#vis-container")
@@ -26,9 +31,29 @@ const color = d3.scaleOrdinal()
                     .domain(["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"])
                     .range(["#FF7F50", "#21908dff", "#fde725ff", "#fde765ff"]);
 
+//world map
+//reference:
+//https://mappingwithd3.com/getting-started/
+//json file created from:
+//https://geojson-maps.ash.ms/
+
+d3.json('data/map.geo.json').then(function(bb) {
+  let mapWidth = width - margin.left - margin.right;
+  let mapHeight = height - margin.top - margin.bottom;
+  let projection = d3.geoEqualEarth();
+  projection.fitSize([mapWidth, mapHeight], bb);
+  let geoGenerator = d3.geoPath()
+  .projection(projection);
+
+  svg2.append('g').selectAll('path')
+  .data(bb.features)
+  .join('path')
+  .attr('d', geoGenerator)
+  .attr('fill', '#088')
+  .attr('stroke', '#000');
+});
+
 d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
-
-
 
 //bar chart
 
