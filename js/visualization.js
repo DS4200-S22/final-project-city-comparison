@@ -53,7 +53,7 @@ d3.json('data/map.geo.json').then(function(bb) {
   .attr('stroke', '#000');
 });
 
-d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
+d3.csv("data/All_Cleaned_CityLife.csv").then((consdata) => {
 
 //bar chart
 
