@@ -53,7 +53,7 @@ d3.json('data/map.geo.json').then(function(bb) {
   .attr('stroke', '#000');
 });
 
-d3.csv("data/All_Cleaned_CityLife.csv").then((consdata) => {
+d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
 
 //bar chart
 
@@ -67,7 +67,7 @@ d3.csv("data/All_Cleaned_CityLife.csv").then((consdata) => {
     //sample continent selection
     //reference:
     //https://stackoverflow.com/questions/23156864/d3-js-filter-from-csv-file-using-multiple-columns
-    let data = consdata.filter(function(d) 
+    var data = consdata.filter(function(d) 
     { 
         if( d["UA_Continent"] == "North America")
         { 
@@ -76,10 +76,10 @@ d3.csv("data/All_Cleaned_CityLife.csv").then((consdata) => {
     });
 
 
-let costOfLiving = data.map(function(d) { return d["Cost of Living"] });
-let housing = data.map(function(d) { return d["Housing"] });
-let healthcare = data.map(function(d) { return d["Healthcare"] });
-let leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
+var costOfLiving = data.map(function(d) { return d["Cost of Living"] });
+var housing = data.map(function(d) { return d["Housing"] });
+var healthcare = data.map(function(d) { return d["Healthcare"] });
+var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
 
 /*
     const avgRatings = [(d3.mean(costOfLiving)),
