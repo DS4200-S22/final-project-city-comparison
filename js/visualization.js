@@ -65,12 +65,13 @@ let myCircles;
 let column = "Cost of Living";
 
 const color = d3.scaleOrdinal()
-                    .domain(["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"])
-                    .range(["#FF7F50", "#21908dff", "#fde725ff", "#fde765ff"]);
+                    .domain(["Cost of Living", "Housing", "Recreational Overall", "Safety","Environmental Quality",
+                        "Residential Overall"])
+                    .range(["#FF7F50", "#21908dff", "#f7a6c2", "#8d68b3", "#79b879", "#cf4851"]);
 
 
 
-d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
+d3.csv("data/New_Cleaned_CityLife.csv").then((consdata) => {
 
 
     var data = consdata.filter(function(d) 
@@ -124,7 +125,7 @@ d3.json('data/map.geo.json').then(function(bb) {
 
 {
 
-    const attributes = ["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"];
+    //const attributes = ["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"];
 
     //sample continent selection
     //reference:
@@ -133,10 +134,15 @@ d3.json('data/map.geo.json').then(function(bb) {
     
 
 
-var costOfLiving = data.map(function(d) { return d["Cost of Living"] });
-var housing = data.map(function(d) { return d["Housing"] });
-var healthcare = data.map(function(d) { return d["Healthcare"] });
-var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
+const costOfLiving = data.map(function(d) { return d["Cost of Living"] });
+const housing = data.map(function(d) { return d["Housing"] });
+const healthcare = data.map(function(d) { return d["Healthcare"] });
+const leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
+const recreational = data.map(function(d) { return d["Recreational Overall"] });
+const safety = data.map(function(d) { return d["Safety"] });
+const enivironment = data.map(function(d) { return d["Environmental Quality"] });
+const residential = data.map(function(d) { return d["Residential Overall"] });
+
 
 /*
     const avgRatings = [(d3.mean(costOfLiving)),
@@ -148,8 +154,12 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
     const avgRatings = [
     {attr : "Cost of Living", rating:(d3.mean(costOfLiving))},
     {attr : "Housing", rating:(d3.mean(housing))},
-    {attr : "Healthcare", rating:(d3.mean(healthcare))},
-    {attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
+    {attr : "Recreational Overall", rating:(d3.mean(recreational))},
+    {attr : "Safety", rating:(d3.mean(safety))},
+    {attr : "Environmental Quality", rating:(d3.mean(enivironment))},
+    {attr : "Residential Overall", rating:(d3.mean(residential))}
+    //{attr : "Healthcare", rating:(d3.mean(healthcare))},
+    //{attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
     ];
 
 
@@ -165,7 +175,11 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
         .attr("transform", `translate(0,${height - margin.bottom})`) 
         .call(d3.axisBottom(x3)   
           .tickFormat(i => avgRatings[i].attr))
-        .attr("font-size", '20px');
+        .selectAll("text")
+        .attr("transform", "translate(-10,10)rotate(-24)")
+        .style("text-anchor", "end")
+        .style("font-size", 19)
+        //.attr("font-size", '20px');
 
     // Find max y (50)
     let maxY3 = d3.max(avgRatings, function(d) { return d.rating; });
@@ -197,19 +211,7 @@ let click = function(event, d) {
 
   }
   */
-  function updateData(d,i) {
-   column = i.attr;
-   console.log(column);
-   input = data.map(function(d) { return d[column] });
-   cityCostOfLiving = [
-   {city: cities, overall: overallScore, rating:input}];
-   console.log(cityCostOfLiving);
-   scatterData = [];
-   for (let i = 0; i < cities.length; i++) {
-    scatterData.push({city : cities[i], overall:overallScore[i], rating:input[i]})}
-    return scatterData;
-    updateScatter;
-}
+  
         
 
     // Add points
@@ -333,7 +335,7 @@ const mouseleave = function(event, d) {
                               .attr("cx", (d) => x1(d.overall))
                               .attr("cy", (d) => y1(d.rating))
                               .attr("r", 8)
-                              .style("fill", (d) => color(costOfLiving))
+                              .style("fill", (d) => color(column))
                               .style("opacity", 0.5)
                               .on("mouseover", mouseover )
                               .on("mousemove", mousemove )
@@ -359,7 +361,7 @@ const mouseleave = function(event, d) {
                               .attr("cx", (d) => x1(d.overall))
                               .attr("cy", (d) => y1(d.rating))
                               .attr("r", 8)
-                              .style("fill", (d) => color(costOfLiving))
+                              .style("fill", (d) => color(column))
                               .style("opacity", 0.5)
                               .on("mouseover", mouseover )
                               .on("mousemove", mousemove )
