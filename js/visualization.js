@@ -65,9 +65,8 @@ let myCircles;
 let column = "Cost of Living";
 
 const color = d3.scaleOrdinal()
-                    .domain(["Cost of Living", "Housing", "Recreational Overall", "Safety","Environmental Quality",
-                        "Residential Overall"])
-                    .range(["#FF7F50", "#21908dff", "#f7a6c2", "#8d68b3", "#79b879", "#cf4851"]);
+                    .domain(["Macroeconomic Overall", "Recreational Overall","Residential Overall"])
+                    .range([ "#21908dff",  "#8d68b3",  "#cf4851"]);
 
 
 
@@ -135,7 +134,7 @@ d3.json('data/map.geo.json').then(function(bb) {
 
 
 const costOfLiving = data.map(function(d) { return d["Cost of Living"] });
-const housing = data.map(function(d) { return d["Housing"] });
+const macro = data.map(function(d) { return d["Macroeconomic Overall"] });
 const healthcare = data.map(function(d) { return d["Healthcare"] });
 const leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
 const recreational = data.map(function(d) { return d["Recreational Overall"] });
@@ -152,11 +151,11 @@ const residential = data.map(function(d) { return d["Residential Overall"] });
     */
 
     const avgRatings = [
-    {attr : "Cost of Living", rating:(d3.mean(costOfLiving))},
-    {attr : "Housing", rating:(d3.mean(housing))},
+    //{attr : "Cost of Living", rating:(d3.mean(costOfLiving))},
+    {attr : "Macroeconomic Overall", rating:(d3.mean(macro))},
     {attr : "Recreational Overall", rating:(d3.mean(recreational))},
-    {attr : "Safety", rating:(d3.mean(safety))},
-    {attr : "Environmental Quality", rating:(d3.mean(enivironment))},
+   // {attr : "Safety", rating:(d3.mean(safety))},
+    //{attr : "Environmental Quality", rating:(d3.mean(enivironment))},
     {attr : "Residential Overall", rating:(d3.mean(residential))}
     //{attr : "Healthcare", rating:(d3.mean(healthcare))},
     //{attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
@@ -175,11 +174,7 @@ const residential = data.map(function(d) { return d["Residential Overall"] });
         .attr("transform", `translate(0,${height - margin.bottom})`) 
         .call(d3.axisBottom(x3)   
           .tickFormat(i => avgRatings[i].attr))
-        .selectAll("text")
-        .attr("transform", "translate(-10,10)rotate(-24)")
-        .style("text-anchor", "end")
-        .style("font-size", 19)
-        //.attr("font-size", '20px');
+        .attr("font-size", '20px');
 
     // Find max y (50)
     let maxY3 = d3.max(avgRatings, function(d) { return d.rating; });
