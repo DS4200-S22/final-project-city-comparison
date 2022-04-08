@@ -62,7 +62,7 @@ let x1;
 let y1;
 let myBars;
 let myCircles;
-let column = "Cost of Living";
+let column = "Macroeconomic Overall";
 
 const color = d3.scaleOrdinal()
                     .domain(["Macroeconomic Overall", "Recreational Overall","Residential Overall"])
