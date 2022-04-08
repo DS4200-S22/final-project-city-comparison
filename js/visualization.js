@@ -26,10 +26,15 @@ const svg1 = d3.select("#vis-container")
 
 let myBars;
 let myCircles;
+let column;
 
 const color = d3.scaleOrdinal()
                     .domain(["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"])
                     .range(["#FF7F50", "#21908dff", "#fde725ff", "#fde765ff"]);
+
+
+
+d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
 
 //world map
 //reference:
@@ -52,8 +57,6 @@ d3.json('data/map.geo.json').then(function(bb) {
   .attr('fill', '#088')
   .attr('stroke', '#000');
 });
-
-d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
 
 //bar chart
 
@@ -132,7 +135,16 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
                     .style("text-anchor", "middle")
                     .text("Attribute Rating")
       ); 
-;
+
+        /*
+let column = ""
+let click = function(event, d) {
+    console.log(d3.select(this).attr("x")['label']);
+
+  }
+  */
+
+
 
     // Add points
     myBars = svg3.selectAll("bar")
@@ -143,8 +155,14 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
                               .attr("y", (d) => y3(d.rating))
                               .attr("height", (d) => (height - margin.bottom) - y3(d.rating)) 
                               .attr("width", x3.bandwidth())
-                              .style("fill", (d) => color(d.attr));       
+                              .style("fill", (d) => color(d.attr))
+                              .on("click", function(d,i) {
+                                column = i.attr;
+                                return column;
+                            }); 
   }
+
+ 
 
 //scatter plot
 {
