@@ -44,10 +44,10 @@ let mouseover = function(event, d) {
 
 let mousemove = function(event, d) {
     tooltip
-      .html("City: " + d.city + "<br/>" + column + ": "+ d.rating + "<br/>Overall Rating: " 
+    .html("City: " + d.city + "<br/>" + column + ": "+ d.rating + "<br/>Overall Rating: " 
         + d.overall)
-        .style("left", d + 10 + "px") 
-        .style("top", d - 15 + "px");
+    .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+    .style("top", event.pageY + "px")
   }
 
   // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
