@@ -73,7 +73,7 @@ const color = d3.scaleOrdinal()
 d3.csv("data/New_Cleaned_CityLife.csv").then((consdata) => {
 
 
-    var data = consdata.filter(function(d) 
+    const data = consdata.filter(function(d) 
     { 
         if( d["UA_Continent"] == "North America")
         { 
