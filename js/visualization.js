@@ -22,14 +22,78 @@ const svg1 = d3.select("#vis-container")
                 .attr("width", width - margin.left - margin.right)
                 .attr("height", height - margin.top - margin.bottom)
                 .attr("viewBox", [0, 0, width, height]); 
- 
+//tooltip for hovering
 
+let tooltip = d3.select("#vis-container")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px");
+
+let mouseover = function(event, d) {
+    d3.select(this).transition()
+        .duration('100')
+        .attr("r", 10);
+        tooltip
+        .style("opacity", 1);
+  }
+
+let mousemove = function(event, d) {
+    tooltip
+      .html("City: " + d.city + "<br/>" + column + ": "+ d.rating + "<br/>Overall Rating: " 
+        + d.overall)
+        .style("left", d + 10 + "px") 
+        .style("top", d - 15 + "px");
+  }
+
+  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+let mouseleave = function(event, d) {
+    d3.select(this).transition()
+        .attr("r", 8)
+        .duration(100);
+        tooltip.style("opacity", 0);
+  }
+ 
+let x1;
+let y1;
 let myBars;
 let myCircles;
+let column = "Macroeconomic Overall";
 
 const color = d3.scaleOrdinal()
-                    .domain(["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"])
-                    .range(["#FF7F50", "#21908dff", "#fde725ff", "#fde765ff"]);
+                    .domain(["Macroeconomic Overall", "Recreational Overall","Residential Overall"])
+                    .range([ "#21908dff",  "#8d68b3",  "#cf4851"]);
+
+
+
+d3.csv("data/New_Cleaned_CityLife.csv").then((consdata) => {
+
+
+    var data = consdata.filter(function(d) 
+    { 
+        if( d["UA_Continent"] == "North America")
+        { 
+            return d;
+        } 
+    });
+
+    const overallScore = data.map(function(d) { return d["Overall Rating"] });
+    let cities = data.map(function(d) { return d["UA_Name"] });
+    let input = data.map(function(d) { return d[column] });
+
+    let cityCostOfLiving = [
+    {city: cities, overall: overallScore, rating:input}];
+    console.log(cityCostOfLiving);
+    let scatterData = [];
+
+    for (let i = 0; i < cities.length; i++) {
+        scatterData.push({city : cities[i], overall:overallScore[i], rating:input[i]})
+    }
+
 
 //world map
 //reference:
@@ -53,8 +117,6 @@ d3.json('data/map.geo.json').then(function(bb) {
   .attr('stroke', '#000');
 });
 
-d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
-
 //bar chart
 
 //average each attribute in category across continent - AvgRating
@@ -62,24 +124,24 @@ d3.csv("data/Cleaned_CityLife.csv").then((consdata) => {
 
 {
 
-    const attributes = ["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"];
+    //const attributes = ["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"];
 
     //sample continent selection
     //reference:
     //https://stackoverflow.com/questions/23156864/d3-js-filter-from-csv-file-using-multiple-columns
-    var data = consdata.filter(function(d) 
-    { 
-        if( d["UA_Continent"] == "North America")
-        { 
-            return d;
-        } 
-    });
+
+    
 
 
-var costOfLiving = data.map(function(d) { return d["Cost of Living"] });
-var housing = data.map(function(d) { return d["Housing"] });
-var healthcare = data.map(function(d) { return d["Healthcare"] });
-var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
+const costOfLiving = data.map(function(d) { return d["Cost of Living"] });
+const macro = data.map(function(d) { return d["Macroeconomic Overall"] });
+const healthcare = data.map(function(d) { return d["Healthcare"] });
+const leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
+const recreational = data.map(function(d) { return d["Recreational Overall"] });
+const safety = data.map(function(d) { return d["Safety"] });
+const enivironment = data.map(function(d) { return d["Environmental Quality"] });
+const residential = data.map(function(d) { return d["Residential Overall"] });
+
 
 /*
     const avgRatings = [(d3.mean(costOfLiving)),
@@ -89,10 +151,14 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
     */
 
     const avgRatings = [
-    {attr : "Cost of Living", rating:(d3.mean(costOfLiving))},
-    {attr : "Housing", rating:(d3.mean(housing))},
-    {attr : "Healthcare", rating:(d3.mean(healthcare))},
-    {attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
+    //{attr : "Cost of Living", rating:(d3.mean(costOfLiving))},
+    {attr : "Macroeconomic Overall", rating:(d3.mean(macro))},
+    {attr : "Recreational Overall", rating:(d3.mean(recreational))},
+   // {attr : "Safety", rating:(d3.mean(safety))},
+    //{attr : "Environmental Quality", rating:(d3.mean(enivironment))},
+    {attr : "Residential Overall", rating:(d3.mean(residential))}
+    //{attr : "Healthcare", rating:(d3.mean(healthcare))},
+    //{attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
     ];
 
 
@@ -132,7 +198,16 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
                     .style("text-anchor", "middle")
                     .text("Attribute Rating")
       ); 
-;
+
+        /*
+let column = ""
+let click = function(event, d) {
+    console.log(d3.select(this).attr("x")['label']);
+
+  }
+  */
+  
+        
 
     // Add points
     myBars = svg3.selectAll("bar")
@@ -143,8 +218,11 @@ var leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
                               .attr("y", (d) => y3(d.rating))
                               .attr("height", (d) => (height - margin.bottom) - y3(d.rating)) 
                               .attr("width", x3.bandwidth())
-                              .style("fill", (d) => color(d.attr));       
+                              .style("fill", (d) => color(d.attr))
+                              .on("click", updateScatter); 
   }
+
+ 
 
 //scatter plot
 {
@@ -155,18 +233,7 @@ const y_data = (data.map(function(d){ return d.(overall_score[0])}))
 */
 
 
-let overallScore = data.map(function(d) { return d["Overall Rating"] });
-let cities = data.map(function(d) { return d["UA_Name"] });
 
-const cityCostOfLiving = [
-    {city: cities, overall: overallScore, rating:costOfLiving}];
-    console.log(cityCostOfLiving);
-
-const scatterData = [];
-
-for (let i = 0; i < cities.length; i++) {
-  scatterData.push({city : cities[i], overall:overallScore[i], rating:costOfLiving[i]})
-}
 
 
 // Find max x
@@ -177,7 +244,7 @@ for (let i = 0; i < cities.length; i++) {
     let maxX1 = d3.max(overallScore);
 
     // Create X scale
-    let x1 = d3.scaleLinear()
+    x1 = d3.scaleLinear()
                 .domain([0, maxX1])
                 .range([margin.left, width-margin.right]); 
     
@@ -195,10 +262,10 @@ for (let i = 0; i < cities.length; i++) {
       );
 
     // Finx max y 
-    let maxY1 = d3.max(costOfLiving);
+    let maxY1 = 10;
 
     // Create Y scale
-    let y1 = d3.scaleLinear()
+    y1 = d3.scaleLinear()
                 .domain([0, maxY1])
                 .range([height - margin.bottom, margin.top]); 
        
@@ -215,7 +282,7 @@ for (let i = 0; i < cities.length; i++) {
                     .attr("dy", "8em")
                     .attr('fill', 'black')
                     .style("text-anchor", "middle")
-                    .text("Cost of Living Rating")
+                    .text("Attribute Rating")
       ); 
 
   
@@ -226,17 +293,7 @@ for (let i = 0; i < cities.length; i++) {
         .attr("font-size", '20px'); 
 
 
-//tooltip for hovering
 
-let tooltip = d3.select("#vis-container")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "1px")
-    .style("border-radius", "5px")
-    .style("padding", "10px");
 
 /*
 const mouseover = function(event, d) {
@@ -260,29 +317,7 @@ const mouseleave = function(event, d) {
 }
 */
 
-let mouseover = function(event, d) {
-    d3.select(this).transition()
-        .duration('100')
-        .attr("r", 10);
-        tooltip
-        .style("opacity", 1);
-  }
 
-let mousemove = function(event, d) {
-    tooltip
-      .html("City: " + d.city + "<br/>Cost of Living: " + d.rating + "<br/>Overall Rating: " 
-        + d.overall)
-        .style("left", d + 10 + "px") 
-        .style("top", d - 15 + "px");
-  }
-
-  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-let mouseleave = function(event, d) {
-    d3.select(this).transition()
-        .attr("r", 8)
-        .duration(100);
-        tooltip.style("opacity", 0);
-  }
 
 
 
@@ -295,11 +330,38 @@ let mouseleave = function(event, d) {
                               .attr("cx", (d) => x1(d.overall))
                               .attr("cy", (d) => y1(d.rating))
                               .attr("r", 8)
-                              .style("fill", (d) => color(costOfLiving))
+                              .style("fill", (d) => color(column))
                               .style("opacity", 0.5)
                               .on("mouseover", mouseover )
                               .on("mousemove", mousemove )
                               .on("mouseleave", mouseleave ); 
 }
+
+
+    function updateScatter(d,i) {
+        column = i.attr;
+        console.log(column);
+        input = data.map(function(d) { return d[column] });
+        cityCostOfLiving = [
+        {city: cities, overall: overallScore, rating:input}];
+        scatterData = [];
+        for (let i = 0; i < cities.length; i++) {
+            scatterData.push({city : cities[i], overall:overallScore[i], rating:input[i]})}
+            console.log(scatterData);
+            svg1.selectAll("circle").remove();
+            myCircles = svg1.selectAll("circle")
+                            .data(scatterData)
+                            .enter()
+                            .append("circle")
+                              .attr("cx", (d) => x1(d.overall))
+                              .attr("cy", (d) => y1(d.rating))
+                              .attr("r", 8)
+                              .style("fill", (d) => color(column))
+                              .style("opacity", 0.5)
+                              .on("mouseover", mouseover )
+                              .on("mousemove", mousemove )
+                              .on("mouseleave", mouseleave ); 
+                             
+    }
 
 }); 
