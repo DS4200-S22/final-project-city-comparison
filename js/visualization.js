@@ -93,51 +93,55 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
 /*
 //world map
 //reference:
-//https://mappingwithd3.com/getting-started/
-//json file created from:
-//https://geojson-maps.ash.ms/
+//https://d3-graph-gallery.com/graph/choropleth_basic.html
+//continent json file:
+//https://gist.github.com/cmunns/76fb72646a68202e6bde#file-continents-json
 */
+{
 
-// Map and projection
-const path = d3.geoPath();
-const projection = d3.geoMercator()
-  .scale(130)
-  .center([0,20])
-  .translate([width / 2, height / 2]);
+    // add title
+    svg2.append("text")
+        .attr("x", width/2)
+        .attr("y", -margin.top/2)
+        .attr("text-anchor", "middle")
+        .style("font-size", "20px")
+        .text("Overall Attribute Rating By Continent");
 
-// Data and color scale
-let mapData = new Map()
-const colorScale = d3.scaleLinear()
-  .domain([4.54, 5.9])
-  .range(["#deebf7","#3182bd"] );
+    const path = d3.geoPath();
+    const projection = d3.geoMercator()
+        .scale(130)
+        .center([0,20])
+        .translate([width / 2, height / 2]);
 
-// Load external data and boot
-Promise.all([
-d3.json('data/continents.json'),
-d3.csv('data/dests.csv', function(d) {
-    mapData.set(d.name, +d.overallRating);
-})
-]).then(function(loadData){
-    let topo = loadData[0]
+    // Data and color scale
+    let mapData = new Map()
+    const colorScale = d3.scaleLinear()
+        .domain([4.54, 5.9])
+        .range(["#deebf7","#3182bd"] );
 
-// Draw the map
-  svg2.append("g")
-    .selectAll("path")
-    .data(topo.features)
-    .join("path")
-      // draw each country
-      .attr("d", d3.geoPath()
-        .projection(projection)
-      )
-      // set the color of each country
-      .attr("fill", function (d) {
-        d.total = mapData.get(d.properties.continent) || 0;
-        return colorScale(d.total);
-      })
-      .on("mousedown", updateBar)
-      .on("click",updateScatter);
-      //.on("click", updateScatter); 
-});
+    Promise.all([
+    d3.json('data/continents.json'),
+    d3.csv('data/dests.csv', function(d) {
+        mapData.set(d.name, +d.overallRating);
+    })
+    ]).then(function(loadData){
+        let topo = loadData[0]
+
+        svg2.append("g")
+            .selectAll("path")
+            .data(topo.features)
+            .join("path")
+            .attr("d", d3.geoPath()
+            .projection(projection)
+        )
+        .attr("fill", function (d) {
+            d.total = mapData.get(d.properties.continent) || 0;
+            return colorScale(d.total);
+        })
+        .on("mousedown", updateBar)
+        .on("click",updateScatter);
+    });
+}
 
 //bar chart
 
@@ -145,8 +149,13 @@ d3.csv('data/dests.csv', function(d) {
 //plot bar chart: x-axis -> category for continent, y-axis -> AvgRating
 
 {
-
-
+    //add title
+    svg3.append("text")
+        .attr("x", width/2)
+        .attr("y", 0)
+        .attr("text-anchor", "middle")
+        .style("font-size", "20px")
+        .text("Ratings for Chosen Continent");
 
 // Create X scale
     x3 = d3.scaleBand()
@@ -204,7 +213,13 @@ d3.csv('data/dests.csv', function(d) {
 
 //scatter plot
 {
-
+    //add title
+    svg1.append("text")
+   .attr("x", width/2)
+   .attr("y", 0)
+   .attr("text-anchor", "middle")
+   .style("font-size", "20px")
+   .text("Average Overall Rating vs. Chosen Attribute Rating by City");
 
     // Find max x 
     let maxX1 = d3.max(overallScore);
