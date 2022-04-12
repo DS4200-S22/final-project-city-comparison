@@ -313,25 +313,8 @@ function mouseover(event, d) {
         } else {
             column = newColumn;
         }
-        console.log(column);
-        console.log(continent);
-        data = consdata.filter(function(d) 
-    { 
-        if( d["UA_Continent"] == continent)
-        { 
-            return d;
-        } 
-    });
 
-        overallScore = data.map(function(d) { return d["Overall Rating"] });
-        cities = data.map(function(d) { return d["UA_Name"] });
-        input = data.map(function(d) { return d[column] });
-        cityCostOfLiving = [
-        {city: cities, overall: overallScore, rating:input}];
-        scatterData = [];
-        for (let i = 0; i < cities.length; i++) {
-            scatterData.push({city : cities[i], overall:overallScore[i], rating:input[i]})}
-            console.log(scatterData);
+       updateData(d);
             svg1.selectAll("circle").remove();
             myCircles = svg1.selectAll("circle")
                             .data(scatterData)
@@ -350,7 +333,6 @@ function mouseover(event, d) {
 //updates barchart
     function updateBar(event, d) {
         let cont = d.properties.continent;
-        console.log(cont);
         if (cont == "northAmerica") {
             continent = "North America";
         } else if (cont == "southAmerica") {
@@ -364,23 +346,8 @@ function mouseover(event, d) {
         } else {
             continent = "Oceania"
         }
-        console.log(continent);
-        data = consdata.filter(function(d) 
-    { 
-        if( d["UA_Continent"] == continent)
-        { 
-            return d;
-        } 
-    });
-        macro = data.map(function(d) { return d["Macroeconomic Overall"] });
-        recreational = data.map(function(d) { return d["Recreational Overall"] });
-        residential = data.map(function(d) { return d["Residential Overall"] });
 
-        avgRatings = [
-        {attr : "Macroeconomic Overall", rating:(d3.mean(macro))},
-        {attr : "Recreational Overall", rating:(d3.mean(recreational))},
-        {attr : "Residential Overall", rating:(d3.mean(residential))}
-    ];
+        updateData(d);
     svg3.selectAll("rect").remove();
      myBars = svg3.selectAll("bar")
                             .data(avgRatings)
@@ -396,6 +363,40 @@ function mouseover(event, d) {
 
     
                              
+    }
+//function that updates data
+    function updateData(d) {
+         data = consdata.filter(function(d) 
+    { 
+        if( d["UA_Continent"] == continent)
+        { 
+            return d;
+        } 
+    });
+
+    overallScore = data.map(function(d) { return d["Overall Rating"] });
+    cities = data.map(function(d) { return d["UA_Name"] });
+    input = data.map(function(d) { return d[column] });
+
+    cityCostOfLiving = [
+    {city: cities, overall: overallScore, rating:input}];
+    scatterData = [];
+
+    for (let i = 0; i < cities.length; i++) {
+        scatterData.push({city : cities[i], overall:overallScore[i], rating:input[i]})
+    }
+    macro = data.map(function(d) { return d["Macroeconomic Overall"] });
+    recreational = data.map(function(d) { return d["Recreational Overall"] });
+    residential = data.map(function(d) { return d["Residential Overall"] });
+
+
+    avgRatings = [
+    {attr : "Macroeconomic Overall", rating:(d3.mean(macro))},
+    {attr : "Recreational Overall", rating:(d3.mean(recreational))},
+    {attr : "Residential Overall", rating:(d3.mean(residential))}
+    ];
+
+
     }
 
 
