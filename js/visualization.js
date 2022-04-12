@@ -34,7 +34,7 @@ let tooltip = d3.select("#vis-container")
     .style("border-radius", "5px")
     .style("padding", "10px");
 
-
+//global variables
 let x1;
 let y1;
 let x3;
@@ -46,6 +46,7 @@ let column = "Macroeconomic Overall";
 let continent = "North America";
 let data;
 
+//sets color scheme
 const color = d3.scaleOrdinal()
                     .domain(["Macroeconomic Overall", "Recreational Overall","Residential Overall"])
                     .range([ "#21908dff",  "#8d68b3",  "#cf4851"]);
@@ -54,7 +55,7 @@ const color = d3.scaleOrdinal()
 
 d3.csv("data/New_Cleaned_CityLife.csv").then((consdata) => {
 
-
+//creates data
     data = consdata.filter(function(d) 
     { 
         if( d["UA_Continent"] == continent)
@@ -76,32 +77,17 @@ d3.csv("data/New_Cleaned_CityLife.csv").then((consdata) => {
         scatterData.push({city : cities[i], overall:overallScore[i], rating:input[i]})
     }
 
-//const costOfLiving = data.map(function(d) { return d["Cost of Living"] });
 let macro = data.map(function(d) { return d["Macroeconomic Overall"] });
-//const healthcare = data.map(function(d) { return d["Healthcare"] });
-//const leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
 let recreational = data.map(function(d) { return d["Recreational Overall"] });
-//const safety = data.map(function(d) { return d["Safety"] });
-//const enivironment = data.map(function(d) { return d["Environmental Quality"] });
 let residential = data.map(function(d) { return d["Residential Overall"] });
 
 
-/*
-    const avgRatings = [(d3.mean(costOfLiving)),
-    (d3.mean(housing)),
-    (d3.mean(healthcare)),
-    (d3.mean(leisureCulture))];
-    */
+
 
     let avgRatings = [
-    //{attr : "Cost of Living", rating:(d3.mean(costOfLiving))},
     {attr : "Macroeconomic Overall", rating:(d3.mean(macro))},
     {attr : "Recreational Overall", rating:(d3.mean(recreational))},
-   // {attr : "Safety", rating:(d3.mean(safety))},
-    //{attr : "Environmental Quality", rating:(d3.mean(enivironment))},
     {attr : "Residential Overall", rating:(d3.mean(residential))}
-    //{attr : "Healthcare", rating:(d3.mean(healthcare))},
-    //{attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
     ];
 
 /*
@@ -110,22 +96,6 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
 //https://mappingwithd3.com/getting-started/
 //json file created from:
 //https://geojson-maps.ash.ms/
-
-d3.json('data/map.geo.json').then(function(bb) {
-  let mapWidth = width - margin.left - margin.right;
-  let mapHeight = height - margin.top - margin.bottom;
-  let projection = d3.geoEqualEarth();
-  projection.fitSize([mapWidth, mapHeight], bb);
-  let geoGenerator = d3.geoPath()
-  .projection(projection);
-
-  svg2.append('g').selectAll('path')
-  .data(bb.features)
-  .join('path')
-  .attr('d', geoGenerator)
-  .attr('fill', '#088')
-  .attr('stroke', '#000');
-});
 */
 
 // Map and projection
@@ -176,17 +146,6 @@ d3.csv('data/dests.csv', function(d) {
 
 {
 
-    //const attributes = ["Cost of Living", "Housing", "Healthcare", "Leisure & Culture"];
-
-    //sample continent selection
-    //reference:
-    //https://stackoverflow.com/questions/23156864/d3-js-filter-from-csv-file-using-multiple-columns
-
-    
-
-
-
-
 
 
 // Create X scale
@@ -225,14 +184,7 @@ d3.csv('data/dests.csv', function(d) {
                     .text("Attribute Rating")
       ); 
 
-        /*
-let column = ""
-let click = function(event, d) {
-    console.log(d3.select(this).attr("x")['label']);
-
-  }
-  */
-  
+       
         
 
     // Add points
@@ -252,19 +204,7 @@ let click = function(event, d) {
 
 //scatter plot
 {
-/*
-const ratings = (data.map(function(d){ return d[attributes[0]]}))
-const overall_score = ["Overall Rating"]
-const y_data = (data.map(function(d){ return d.(overall_score[0])}))
-*/
 
-
-
-
-
-// Find max x
-   // let maxX1 = d3.max(cityCostOfLiving, (d) => 
-    //    { return d.city; });
 
     // Find max x 
     let maxX1 = d3.max(overallScore);
@@ -319,35 +259,6 @@ const y_data = (data.map(function(d){ return d.(overall_score[0])}))
         .attr("font-size", '20px'); 
 
 
-
-
-/*
-const mouseover = function(event, d) {
-    d3.select(this).transition()
-        .duration('100')
-        .attr("r", 10);
-        tooltip
-        .style("opacity", 1)
-        .html("City: " + d.city + "<br/>Cost of Living: " + d.rating + "<br/>Overall Rating: " 
-        + d.overall)
-        .style("left", d3.select(this).attr("cx") + 10 + "px") 
-        .style("top", d3.select(this).attr("cy") - 15 + "px");
-}
-
-
-const mouseleave = function(event, d) {
-    d3.select(this).transition()
-        .attr("r", 8)
-        .duration(100);
-        tooltip.style("opacity", 0);
-}
-*/
-
-
-
-
-
-
     // Add points to Scatterplot
     myCircles = svg1.selectAll("circle")
                             .data(scatterData)
@@ -363,10 +274,10 @@ const mouseleave = function(event, d) {
                               .on("mouseleave", mouseleave ); 
 }
 
-/* function
+/* functions -----------------------------------------------------------------------------------------------------
 */
 
-
+//mouse over function for scatter plot
 function mouseover(event, d) {
     d3.select(this).transition()
         .duration('100')
@@ -374,6 +285,8 @@ function mouseover(event, d) {
         tooltip
         .style("opacity", 1);
   }
+
+  //adds text to hover function scatter plot
   function mousemove(event, d) {
     tooltip
     .html("City: " + d.city + "<br/>" + column + ": "+ d.rating + "<br/>Overall Rating: " 
@@ -382,7 +295,7 @@ function mouseover(event, d) {
     .style("top", event.pageY + "px")
   }
 
-  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+  //mouse leave function for scatter plot
   function mouseleave(event, d) {
     d3.select(this).transition()
         .attr("r", 8)
@@ -391,7 +304,7 @@ function mouseover(event, d) {
   }
 
 
-
+//updates scatter plot
     function updateScatter(d,i) {
         let newColumn = i.attr;
         if (newColumn == null) {
@@ -434,7 +347,7 @@ function mouseover(event, d) {
                               .on("mouseleave", mouseleave ); 
                              
     }
-
+//updates barchart
     function updateBar(event, d) {
         let cont = d.properties.continent;
         console.log(cont);
@@ -483,11 +396,6 @@ function mouseover(event, d) {
 
     
                              
-    }
-
-    function updateBarAndScatter() {
-        updateScatter();
-        updateBar();
     }
 
 
