@@ -164,7 +164,8 @@ d3.csv('data/dests.csv', function(d) {
         d.total = mapData.get(d.properties.continent) || 0;
         return colorScale(d.total);
       })
-      .on("click", updateBar); 
+      .on("click", updateBar)
+      .on("click", updateScatter); 
 });
 
 //bar chart
