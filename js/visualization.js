@@ -34,35 +34,17 @@ let tooltip = d3.select("#vis-container")
     .style("border-radius", "5px")
     .style("padding", "10px");
 
-let mouseover = function(event, d) {
-    d3.select(this).transition()
-        .duration('100')
-        .attr("r", 10);
-        tooltip
-        .style("opacity", 1);
-  }
 
-let mousemove = function(event, d) {
-    tooltip
-    .html("City: " + d.city + "<br/>" + column + ": "+ d.rating + "<br/>Overall Rating: " 
-        + d.overall)
-    .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-    .style("top", event.pageY + "px")
-  }
-
-  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-let mouseleave = function(event, d) {
-    d3.select(this).transition()
-        .attr("r", 8)
-        .duration(100);
-        tooltip.style("opacity", 0);
-  }
- 
 let x1;
 let y1;
+let x3;
+let y3;
+let maxY3;
 let myBars;
 let myCircles;
 let column = "Macroeconomic Overall";
+let continent = "North America";
+let data;
 
 const color = d3.scaleOrdinal()
                     .domain(["Macroeconomic Overall", "Recreational Overall","Residential Overall"])
@@ -73,15 +55,15 @@ const color = d3.scaleOrdinal()
 d3.csv("data/New_Cleaned_CityLife.csv").then((consdata) => {
 
 
-    const data = consdata.filter(function(d) 
+    data = consdata.filter(function(d) 
     { 
-        if( d["UA_Continent"] == "North America")
+        if( d["UA_Continent"] == continent)
         { 
             return d;
         } 
     });
 
-    const overallScore = data.map(function(d) { return d["Overall Rating"] });
+    let overallScore = data.map(function(d) { return d["Overall Rating"] });
     let cities = data.map(function(d) { return d["UA_Name"] });
     let input = data.map(function(d) { return d[column] });
 
@@ -93,6 +75,34 @@ d3.csv("data/New_Cleaned_CityLife.csv").then((consdata) => {
     for (let i = 0; i < cities.length; i++) {
         scatterData.push({city : cities[i], overall:overallScore[i], rating:input[i]})
     }
+
+//const costOfLiving = data.map(function(d) { return d["Cost of Living"] });
+let macro = data.map(function(d) { return d["Macroeconomic Overall"] });
+//const healthcare = data.map(function(d) { return d["Healthcare"] });
+//const leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
+let recreational = data.map(function(d) { return d["Recreational Overall"] });
+//const safety = data.map(function(d) { return d["Safety"] });
+//const enivironment = data.map(function(d) { return d["Environmental Quality"] });
+let residential = data.map(function(d) { return d["Residential Overall"] });
+
+
+/*
+    const avgRatings = [(d3.mean(costOfLiving)),
+    (d3.mean(housing)),
+    (d3.mean(healthcare)),
+    (d3.mean(leisureCulture))];
+    */
+
+    let avgRatings = [
+    //{attr : "Cost of Living", rating:(d3.mean(costOfLiving))},
+    {attr : "Macroeconomic Overall", rating:(d3.mean(macro))},
+    {attr : "Recreational Overall", rating:(d3.mean(recreational))},
+   // {attr : "Safety", rating:(d3.mean(safety))},
+    //{attr : "Environmental Quality", rating:(d3.mean(enivironment))},
+    {attr : "Residential Overall", rating:(d3.mean(residential))}
+    //{attr : "Healthcare", rating:(d3.mean(healthcare))},
+    //{attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
+    ];
 
 /*
 //world map
@@ -154,6 +164,7 @@ d3.csv('data/dests.csv', function(d) {
         d.total = mapData.get(d.properties.continent) || 0;
         return colorScale(d.total);
       })
+      .on("click", updateBar); 
 });
 
 //bar chart
@@ -172,38 +183,12 @@ d3.csv('data/dests.csv', function(d) {
     
 
 
-const costOfLiving = data.map(function(d) { return d["Cost of Living"] });
-const macro = data.map(function(d) { return d["Macroeconomic Overall"] });
-const healthcare = data.map(function(d) { return d["Healthcare"] });
-const leisureCulture = data.map(function(d) { return d["Leisure & Culture"] });
-const recreational = data.map(function(d) { return d["Recreational Overall"] });
-const safety = data.map(function(d) { return d["Safety"] });
-const enivironment = data.map(function(d) { return d["Environmental Quality"] });
-const residential = data.map(function(d) { return d["Residential Overall"] });
 
-
-/*
-    const avgRatings = [(d3.mean(costOfLiving)),
-    (d3.mean(housing)),
-    (d3.mean(healthcare)),
-    (d3.mean(leisureCulture))];
-    */
-
-    const avgRatings = [
-    //{attr : "Cost of Living", rating:(d3.mean(costOfLiving))},
-    {attr : "Macroeconomic Overall", rating:(d3.mean(macro))},
-    {attr : "Recreational Overall", rating:(d3.mean(recreational))},
-   // {attr : "Safety", rating:(d3.mean(safety))},
-    //{attr : "Environmental Quality", rating:(d3.mean(enivironment))},
-    {attr : "Residential Overall", rating:(d3.mean(residential))}
-    //{attr : "Healthcare", rating:(d3.mean(healthcare))},
-    //{attr : "Leisure & Culture", rating:(d3.mean(leisureCulture))}
-    ];
 
 
 
 // Create X scale
-    let x3 = d3.scaleBand()
+    x3 = d3.scaleBand()
             .domain(d3.range(avgRatings.length))
             .range([margin.left, width - margin.right])
             .padding(0.1); 
@@ -216,10 +201,10 @@ const residential = data.map(function(d) { return d["Residential Overall"] });
         .attr("font-size", '20px');
 
     // Find max y (50)
-    let maxY3 = d3.max(avgRatings, function(d) { return d.rating; });
+    maxY3 = d3.max(avgRatings, function(d) { return d.rating; });
 
     // Create Y scale
-    let y3 = d3.scaleLinear()
+    y3 = d3.scaleLinear()
                 .domain([0, maxY3])
                 .range([height - margin.bottom, margin.top]); 
 
@@ -376,10 +361,48 @@ const mouseleave = function(event, d) {
                               .on("mouseleave", mouseleave ); 
 }
 
+/* function
+*/
+
+
+function mouseover(event, d) {
+    d3.select(this).transition()
+        .duration('100')
+        .attr("r", 10);
+        tooltip
+        .style("opacity", 1);
+  }
+  function mousemove(event, d) {
+    tooltip
+    .html("City: " + d.city + "<br/>" + column + ": "+ d.rating + "<br/>Overall Rating: " 
+        + d.overall)
+    .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+    .style("top", event.pageY + "px")
+  }
+
+  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+  function mouseleave(event, d) {
+    d3.select(this).transition()
+        .attr("r", 8)
+        .duration(100);
+        tooltip.style("opacity", 0);
+  }
+
+
 
     function updateScatter(d,i) {
         column = i.attr;
         console.log(column);
+        console.log(continent);
+        data = consdata.filter(function(d) 
+    { 
+        if( d["UA_Continent"] == continent)
+        { 
+            return d;
+        } 
+    });
+        overallScore = data.map(function(d) { return d["Overall Rating"] });
+        cities = data.map(function(d) { return d["UA_Name"] });
         input = data.map(function(d) { return d[column] });
         cityCostOfLiving = [
         {city: cities, overall: overallScore, rating:input}];
@@ -402,5 +425,57 @@ const mouseleave = function(event, d) {
                               .on("mouseleave", mouseleave ); 
                              
     }
+
+    function updateBar(event, d) {
+        let cont = d.properties.continent;
+        console.log(cont);
+        if (cont == "northAmerica") {
+            continent = "North America";
+        } else if (cont == "southAmerica") {
+            continent = "South America";
+        } else if (cont == "asia") {
+            continent = "Asia";
+        } else if (cont == "africa") {
+            continent = "Africa";
+        } else if (cont == "europe") {
+            continent = "Europe";
+        } else {
+            continent = "Oceania"
+        }
+        console.log(continent);
+        data = consdata.filter(function(d) 
+    { 
+        if( d["UA_Continent"] == continent)
+        { 
+            return d;
+        } 
+    });
+        macro = data.map(function(d) { return d["Macroeconomic Overall"] });
+        recreational = data.map(function(d) { return d["Recreational Overall"] });
+        residential = data.map(function(d) { return d["Residential Overall"] });
+
+        avgRatings = [
+        {attr : "Macroeconomic Overall", rating:(d3.mean(macro))},
+        {attr : "Recreational Overall", rating:(d3.mean(recreational))},
+        {attr : "Residential Overall", rating:(d3.mean(residential))}
+    ];
+    svg3.selectAll("rect").remove();
+     myBars = svg3.selectAll("bar")
+                            .data(avgRatings)
+                            .enter()
+                              .append("rect")
+                              .attr("x", (d,i) => x3(i))
+                              .attr("y", (d) => y3(d.rating))
+                              .attr("height", (d) => (height - margin.bottom) - y3(d.rating)) 
+                              .attr("width", x3.bandwidth())
+                              .style("fill", (d) => color(d.attr))
+                              .on("click", updateScatter); 
+        
+
+    
+                             
+    }
+
+
 
 }); 
