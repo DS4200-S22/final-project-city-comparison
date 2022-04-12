@@ -131,7 +131,7 @@ d3.json('data/map.geo.json').then(function(bb) {
 // Map and projection
 const path = d3.geoPath();
 const projection = d3.geoMercator()
-  .scale(70)
+  .scale(130)
   .center([0,20])
   .translate([width / 2, height / 2]);
 
@@ -139,7 +139,7 @@ const projection = d3.geoMercator()
 let mapData = new Map()
 const colorScale = d3.scaleLinear()
   .domain([4.54, 5.9])
-  .range(d3.schemeBlues[3]);
+  .range(["#deebf7","#3182bd"] );
 
 // Load external data and boot
 Promise.all([
@@ -164,7 +164,8 @@ d3.csv('data/dests.csv', function(d) {
         d.total = mapData.get(d.properties.continent) || 0;
         return colorScale(d.total);
       })
-      .on("click", updateBar);
+      .on("mousedown", updateBar)
+      .on("click",updateScatter);
       //.on("click", updateScatter); 
 });
 
@@ -392,7 +393,13 @@ function mouseover(event, d) {
 
 
     function updateScatter(d,i) {
-        column = i.attr;
+        let newColumn = i.attr;
+        if (newColumn == null) {
+            column ="Macroeconomic Overall";
+
+        } else {
+            column = newColumn;
+        }
         console.log(column);
         console.log(continent);
         data = consdata.filter(function(d) 
@@ -402,6 +409,7 @@ function mouseover(event, d) {
             return d;
         } 
     });
+
         overallScore = data.map(function(d) { return d["Overall Rating"] });
         cities = data.map(function(d) { return d["UA_Name"] });
         input = data.map(function(d) { return d[column] });
@@ -475,6 +483,11 @@ function mouseover(event, d) {
 
     
                              
+    }
+
+    function updateBarAndScatter() {
+        updateScatter();
+        updateBar();
     }
 
 
