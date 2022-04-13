@@ -105,7 +105,7 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
         .attr("y", -margin.top/2)
         .attr("text-anchor", "middle")
         .style("font-size", "20px")
-        .text("Overall Attribute Rating By Continent");
+        .text("Overall Attribute Rating By Continent (Darker Color Indicates Higher Overall Rating)");
 
     const path = d3.geoPath();
     const projection = d3.geoMercator()
@@ -154,7 +154,7 @@ g.append("text")
     .attr("y", -6)
     .style("font-size","12px")
 
-    .text("Subscribers");
+    .text("Continents");
 let labels = ['Africa', 'S.America', 'Asia', 'N.America', 'Europe', 'Oceania'];
 let legend = d3.legendColor()
     .labels(function (d) { return labels[d.i]; })
