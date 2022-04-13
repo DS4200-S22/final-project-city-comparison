@@ -116,7 +116,7 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
     // Data and color scale
     let mapData = new Map()
     const colorScale = d3.scaleLinear()
-        .domain([4.54, 5.9])
+        .domain([4.1425, 5.81125])
         .range(["#deebf7","#3182bd"] );
 
     Promise.all([
