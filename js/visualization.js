@@ -141,6 +141,32 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
         .on("mousedown", updateBar)
         .on("click",updateScatter);
     });
+
+    // Legend
+    //reference https://d3-legend.susielu.com/#color-linear
+let g = svg2.append("g")
+    
+    .attr("class", "legendThreshold");
+
+g.append("text")
+    .attr("class", "caption")
+    .attr("x", 0)
+    .attr("y", -6)
+    .style("font-size","12px")
+
+    .text("Subscribers");
+let labels = ['Africa', 'S.America', 'Asia', 'N.America', 'Europe', 'Oceania'];
+let legend = d3.legendColor()
+    .labels(function (d) { return labels[d.i]; })
+    .shapePadding(0)
+    .cells(6)
+    .orient('vertical')
+    .shapeWidth(40)
+    .scale(colorScale);
+
+    
+svg2.select(".legendThreshold")
+    .call(legend);
 }
 
 //bar chart
