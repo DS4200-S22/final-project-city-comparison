@@ -152,7 +152,7 @@ g.append("text")
     .attr("class", "caption")
     .attr("x", 0)
     .attr("y", -6)
-    .style("font-size","12px")
+    .style("font-size","8px")
 
     .text("Continents");
 let labels = ['Africa', 'S.America', 'Asia', 'N.America', 'Europe', 'Oceania'];
