@@ -170,8 +170,9 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
           .tickFormat(i => avgRatings[i].attr))
         .attr("font-size", '20px');
 
-    // Find max y (50)
-    maxY3 = d3.max(avgRatings, function(d) { return d.rating; });
+
+
+    maxY3 = 7;
 
     // Create Y scale
     y3 = d3.scaleLinear()
@@ -226,7 +227,7 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
 
     // Create X scale
     x1 = d3.scaleLinear()
-                .domain([0, maxX1])
+                .domain([0, 9])
                 .range([margin.left, width-margin.right]); 
     
     // Add x axis 
