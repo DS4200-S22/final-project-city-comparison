@@ -105,18 +105,26 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
         .attr("y", -margin.top/2)
         .attr("text-anchor", "middle")
         .style("font-size", "20px")
-        .text("Overall Attribute Rating By Continent (Darker Color Indicates Higher Overall Rating)");
+        .style("font-weight", 700)
+        .text("Overall Attribute Rating By Continent");
 
-    const path = d3.geoPath();
-    const projection = d3.geoMercator()
-        .scale(130)
-        .center([0,20])
+    // add title
+    svg2.append("text")
+        .attr("x", width/2)
+        .attr("text-anchor", "middle")
+        .style("font-size", "20px")
+        .text("Click a continent below");
+
+    const projection = d3.geoNaturalEarth1()
+        .scale(175)
+        .center([0,0])
         .translate([width / 2, height / 2]);
+    const path = d3.geoPath().projection(projection);
 
     // Data and color scale
     let mapData = new Map()
     const colorScale = d3.scaleLinear()
-        .domain([4.1425, 5.81125])
+        .domain([4, 6])
         .range(["#deebf7","#3182bd"] );
 
     Promise.all([
@@ -127,20 +135,44 @@ let residential = data.map(function(d) { return d["Residential Overall"] });
     ]).then(function(loadData){
         let topo = loadData[0]
 
+        //add and color continents
         svg2.append("g")
             .selectAll("path")
             .data(topo.features)
             .join("path")
-            .attr("d", d3.geoPath()
-            .projection(projection)
-        )
-        .attr("fill", function (d) {
-            d.total = mapData.get(d.properties.continent) || 0;
-            return colorScale(d.total);
-        })
-        .on("mousedown", updateBar)
-        .on("click",updateScatter);
-    });
+            .attr("d", path)
+            .attr("fill", function (d) {
+                d.total = mapData.get(d.properties.continent) || 0;
+                return colorScale(d.total);
+            })
+            .style('cursor', 'pointer')
+            .on("mousedown", updateBar)
+            .on("click",updateScatter);
+
+        //add labels to map
+        // reference https://plnkr.co/edit/evfrVWyG0oJPAv60CMa5?p=preview&preview
+        let continents = ['Asia', 'Africa', 'Europe', 'North America', 'Oceania', 'South America'];
+        svg2.append("g")
+            .attr("class", "continentLabels")
+            .selectAll("text")
+            .data(topo.features)
+            .enter()
+            .append("svg:text")
+            .text(function(d, i){
+                return continents[i];
+            })
+            .attr("x", function(d){
+                return path.centroid(d)[0];
+            })
+            .attr("y", function(d){
+                return  path.centroid(d)[1];
+            })
+            .attr("text-anchor","middle")
+            .style('cursor', 'pointer')
+            .on("mousedown", updateBar)
+            .on("click",updateScatter);
+
+        });
 
     // Legend
     //reference https://d3-legend.susielu.com/#color-linear
@@ -151,15 +183,15 @@ let g = svg2.append("g")
 g.append("text")
     .attr("class", "caption")
     .attr("x", 0)
-    .attr("y", -6)
+    .attr("y", -15)
     .style("font-size","12px")
-
-    .text("Continents");
-let labels = ['Africa', 'S.America', 'Asia', 'N.America', 'Europe', 'Oceania'];
+    .style("font-weight", 700)
+    .text("Overall Attribute Rating");
+let labels = ['4.0', '4.5', '5.0', '5.5', '6.0'];
 let legend = d3.legendColor()
-    .labels(function (d) { return labels[d.i]; })
+    .labels(function (d) { return labels[d.i];})
     .shapePadding(0)
-    .cells(6)
+    .cells(5)
     .orient('vertical')
     .shapeWidth(30)
     .scale(colorScale);
@@ -177,11 +209,13 @@ svg2.select(".legendThreshold")
 {
     //add title
     svg3.append("text")
+        .attr("class", "barTitle")
         .attr("x", width/2)
         .attr("y", 0)
         .attr("text-anchor", "middle")
         .style("font-size", "20px")
-        .text("Ratings for Chosen Continent");
+        .style("font-weight", 700)
+        .text("Ratings for Chosen Continent: North America");
 
 // Create X scale
     x3 = d3.scaleBand()
@@ -242,11 +276,13 @@ svg2.select(".legendThreshold")
 {
     //add title
     svg1.append("text")
+    .attr("class", "scatterTitle")
    .attr("x", width/2)
    .attr("y", 0)
    .attr("text-anchor", "middle")
    .style("font-size", "20px")
-   .text("Average Overall Rating vs. Chosen Attribute Rating by City");
+   .style("font-weight", 700)
+   .text("Macroeconomic Overall Rating vs. Average Overall Rating by City for Chosen Continent");
 
     // Find max x 
     let maxX1 = d3.max(overallScore);
@@ -284,13 +320,14 @@ svg2.select(".legendThreshold")
       .call(d3.axisLeft(y1)) 
       .attr("font-size", '20px')
       .call((g) => g.append("text")
+                    .attr("class", "scatterYAxisTitle")
                     .attr("transform", "rotate(-90)")
                     .attr("y", 0-margin.left)
                     .attr("x", 0- (height/2)+20)
                     .attr("dy", "8em")
                     .attr('fill', 'black')
                     .style("text-anchor", "middle")
-                    .text("Attribute Rating")
+                    .text("Macroeconomic Overall Rating")
       ); 
 
   
@@ -318,6 +355,22 @@ svg2.select(".legendThreshold")
 
 /* functions -----------------------------------------------------------------------------------------------------
 */
+
+function formatCont(cont) {
+    if (cont == "northAmerica") {
+            return "North America";
+        } else if (cont == "southAmerica") {
+            return "South America";
+        } else if (cont == "asia") {
+            return "Asia";
+        } else if (cont == "africa") {
+            return "Africa";
+        } else if (cont == "europe") {
+            return "Europe";
+        } else {
+            return "Oceania"
+        }
+}
 
 //mouse over function for scatter plot
 function mouseover(event, d) {
@@ -355,52 +408,46 @@ function mouseover(event, d) {
         } else {
             column = newColumn;
         }
-
-       updateData(d);
-            svg1.selectAll("circle").remove();
-            myCircles = svg1.selectAll("circle")
-                            .data(scatterData)
-                            .enter()
-                            .append("circle")
-                              .attr("cx", (d) => x1(d.overall))
-                              .attr("cy", (d) => y1(d.rating))
-                              .attr("r", 8)
-                              .style("fill", (d) => color(column))
-                              .style("opacity", 0.5)
-                              .on("mouseover", mouseover )
-                              .on("mousemove", mousemove )
-                              .on("mouseleave", mouseleave ); 
+        updateData(d);
+        svg1.selectAll(".scatterTitle")
+            .text(column + " Rating vs. Average Overall Rating by City for Chosen Continent");
+        svg1.selectAll(".scatterYAxisTitle")
+            .text(column + " Rating");
+        svg1.selectAll("circle").remove();
+        myCircles = svg1.selectAll("circle")
+            .data(scatterData)
+            .enter()
+            .append("circle")
+            .attr("cx", (d) => x1(d.overall))
+            .attr("cy", (d) => y1(d.rating))
+            .attr("r", 8)
+            .style("fill", (d) => color(column))
+            .style("opacity", 0.5)
+            .on("mouseover", mouseover )
+            .on("mousemove", mousemove )
+            .on("mouseleave", mouseleave ); 
                              
     }
 //updates barchart
     function updateBar(event, d) {
-        let cont = d.properties.continent;
-        if (cont == "northAmerica") {
-            continent = "North America";
-        } else if (cont == "southAmerica") {
-            continent = "South America";
-        } else if (cont == "asia") {
-            continent = "Asia";
-        } else if (cont == "africa") {
-            continent = "Africa";
-        } else if (cont == "europe") {
-            continent = "Europe";
-        } else {
-            continent = "Oceania"
-        }
+        continent = formatCont(d.properties.continent)
 
         updateData(d);
-    svg3.selectAll("rect").remove();
-     myBars = svg3.selectAll("bar")
-                            .data(avgRatings)
-                            .enter()
-                              .append("rect")
-                              .attr("x", (d,i) => x3(i))
-                              .attr("y", (d) => y3(d.rating))
-                              .attr("height", (d) => (height - margin.bottom) - y3(d.rating)) 
-                              .attr("width", x3.bandwidth())
-                              .style("fill", (d) => color(d.attr))
-                              .on("click", updateScatter); 
+
+        svg3.selectAll(".barTitle")
+            .text("Ratings for Chosen Continent: " + continent);
+
+        svg3.selectAll("rect").remove();
+        myBars = svg3.selectAll("bar")
+            .data(avgRatings)
+            .enter()
+            .append("rect")
+            .attr("x", (d,i) => x3(i))
+            .attr("y", (d) => y3(d.rating))
+            .attr("height", (d) => (height - margin.bottom) - y3(d.rating)) 
+            .attr("width", x3.bandwidth())
+            .style("fill", (d) => color(d.attr))
+            .on("click", updateScatter); 
         
 
     
