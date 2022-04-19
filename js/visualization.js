@@ -70,7 +70,7 @@ d3.csv("data/New_Cleaned_CityLife.csv").then((consdata) => {
 
     let cityCostOfLiving = [
     {city: cities, overall: overallScore, rating:input}];
-    console.log(cityCostOfLiving);
+  
     let scatterData = [];
 
     for (let i = 0; i < cities.length; i++) {
